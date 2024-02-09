@@ -1,0 +1,12 @@
+{% extends "PizzaManager/default_page.html" %}
+{% block title %}Toppings Overview{% endblock %}
+{% block css %}<link rel="stylesheet" href="../static/base.css">{% endblock %}
+{% block content %}
+    {% if toppings_list %}
+        {% for topping in toppings_list %}
+            <a id="topping_{{ topping.id }}" class="button" href="/toppings/{{ topping.id }}/">{{ topping.name }}</a>
+        {% endfor %}
+    {% else %}
+        <p>No toppings are available.</p>
+    {% endif %}
+{% endblock %}
