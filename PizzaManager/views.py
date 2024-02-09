@@ -3,7 +3,7 @@ from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
-    return HttpResponse("<h1>Hello World!</h1>")
+    return HttpResponse(render(request, "PizzaManager/landing_page.html"))
 
 def toppings_overview(request):
     return HttpResponse("<h1>Hello World! This is the Toppings Overview!</h1>")

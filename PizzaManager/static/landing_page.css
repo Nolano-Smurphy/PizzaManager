@@ -1,0 +1,29 @@
+body {
+    background-color: blueviolet;
+}
+
+.block {
+    background-color: aliceblue;
+
+    border-style: solid;
+    border-color: aliceblue;
+    border-radius: 20px;
+
+    padding-bottom: 1%;
+
+    margin: auto;
+    text-align: center;
+    width: 40%;
+}
+
+.button {
+    border-style: outset;
+    border-color: black;
+    display: block;
+    margin: auto;
+    text-align: center;
+    padding-top: 20px;
+    width: 120px;
+    height: 40px;
+    font-size: 20px;
+}
