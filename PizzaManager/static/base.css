@@ -1,3 +1,7 @@
+* {
+    font-family: "Tahoma", "Verdana", "sans-serif";
+}
+
 body {
     background-color: blueviolet;
 }
@@ -22,8 +26,10 @@ body {
     display: block;
     margin: auto;
     text-align: center;
-    padding-top: 20px;
-    width: 120px;
-    height: 40px;
-    font-size: 20px;
+    padding-top: 15px;
+    width: fit-content;
+    height: fit-content;
+    min-width: 120px;
+    min-height: 40px;
+    font-size: 125%;
 }
