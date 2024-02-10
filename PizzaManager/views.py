@@ -18,7 +18,9 @@ def toppings_editor(request, topping_id):
     return HttpResponse(final_response % topping_id)
 
 def pizza_overview(request):
-    return HttpResponse("<h1>Hello World! This is the Pizza Editor!</h1>")
+    pizzas_list = Pizza.objects.order_by("name")[:5]
+    context = {"pizzas_list": pizzas_list}
+    return HttpResponse(render(request, "PizzaManager/pizza_overview.html", context))
 
 def pizza_editor(request, pizza_id):
     final_response = "<h1>Hello World! This is the Pizza Editor!</h1><br>"

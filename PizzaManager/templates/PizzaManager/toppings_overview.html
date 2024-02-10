@@ -2,11 +2,14 @@
 {% block title %}Toppings Overview{% endblock %}
 {% block css %}<link rel="stylesheet" href="../static/base.css">{% endblock %}
 {% block content %}
+    <h1>Welcome back, Owner!</h1>
     {% if toppings_list %}
+    <h3>Which topping would you like to inspect?</h3>
         {% for topping in toppings_list %}
-            <a id="topping_{{ topping.id }}" class="button" href="/toppings/{{ topping.id }}/">{{ topping.name }}</a>
+            <a id="topping_{{ topping.id }}" class="button" href="/toppings/{{ topping.id }}/">{{ topping.name }}</a><br>
         {% endfor %}
     {% else %}
-        <p>No toppings are available.</p>
+        <p>No toppings are available. Would you like to add one?</p>
     {% endif %}
+    <a id="new_topping" class="button" href="/toppings/new">Add Topping</a>
 {% endblock %}
