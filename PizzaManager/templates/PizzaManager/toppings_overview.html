@@ -6,7 +6,7 @@
     {% if toppings_list %}
     <h3>Which topping would you like to inspect?</h3>
         {% for topping in toppings_list %}
-            <a id="topping_{{ topping.id }}" class="button" href="/toppings/{{ topping.id }}/">{{ topping.name }}</a><br>
+            <a id="topping_{{ topping.id }}" class="button" href="{% url 'PizzaManager:Toppings Editor' topping.id %}">{{ topping.name }}</a><br>
         {% endfor %}
     {% else %}
         <p>No toppings are available. Would you like to add one?</p>

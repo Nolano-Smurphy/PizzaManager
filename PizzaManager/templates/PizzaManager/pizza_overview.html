@@ -6,7 +6,7 @@
     {% if pizzas_list %}
     <h3>Which pizza would you like to inspect?</h3>
         {% for pizza in pizzas_list %}
-            <a id="pizza_{{ pizza.id }}" class="button" href="/pizza/{{ pizza.id }}/">{{ pizza.name }}</a><br>
+            <a id="pizza_{{ pizza.id }}" class="button" href="{% url 'PizzaManager:Pizza Editor' pizza.id %}">{{ pizza.name }}</a><br>
         {% endfor %}
     {% else %}
         <p>No pizzas are available. Would you like to add one?</p>

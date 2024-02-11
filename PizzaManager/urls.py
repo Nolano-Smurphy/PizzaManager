@@ -2,6 +2,7 @@ from django.urls import path
 
 from . import views
 
+app_name = "PizzaManager"
 urlpatterns = [
     path("", views.index, name="index"),
     path("toppings/", views.toppings_overview, name="Toppings Overview"),
