@@ -1,0 +1,79 @@
+{% extends "PizzaManager/default_page.html" %}
+{% block title %} {{ pizza.name }} Editor{% endblock %}
+{% block css %}<link rel="stylesheet" href="../../static/base.css">{% endblock %}
+
+{% block content %}
+
+<h1>{{ pizza.name }}</h1>
+{% if error_message %}<p><b>ERROR: {{ error_message }}</b></p>{% endif %}
+
+<fieldset id="pizzaChanges">
+    <legend>Pizza</legend>
+    <button id="edit_name" onclick="openChangePizzaNameForm()">Rename Pizza</button>
+    <button id="delete_pizza" onclick="openDeletePizzaForm()">Delete Pizza</button>
+</fieldset><br>
+
+<fieldset id="toppingsChanges">
+    <legend>Toppings</legend>
+    {% for topping in pizza.toppings.all %}
+        <label>{{ topping.name }}</label>
+        <button id="change_topping_{{forloop.counter}}" onclick="">Change</button>
+        <button id="delete_topping_{{forloop.counter}}" onclick="">Remove</button><br><br>
+    {% endfor %}
+    <button id="add_topping" onclick="">Add Topping</button>
+</fieldset>
+
+<!-- All forms will not be visible unless specifically requested by button. -->
+
+<div id="change_name_pizza_form" class="popForm">
+    <form action="{% url 'PizzaManager:Pizza Editor' pizza.id%}" method="post">
+        {% csrf_token %}
+        <h2>Change Pizza Name</h2>
+        <label for="old_name_field">Current Pizza Name:</label>
+        <p id="old_name_field">{{pizza.name}}</p>
+        <label for="new_name_field">New Pizza Name:</label><br>
+        <input id="new_name_field" name="new_name" type="textfield" maxlength="25">
+        <div id="change_name_buttons">
+            <button id="change_name_cancel_button" onclick="closeChangePizzaNameForm()">Cancel</button>
+            <button id="change_name_save_button" type="submit" name="pizza_name_change" value="pizza_name_change">Save</button>
+        </div>
+    </form>
+</div>
+
+<div id="delete_pizza_form" class="popForm">
+    <form action="{% url 'PizzaManager:Pizza Editor' pizza.id%}" method="post">
+        {% csrf_token %}
+        <h2>Delete Pizza</h2>
+        <p>Are you sure you wish to delete <b>{{pizza.name}}</b>?</p>
+        <div id="delete_buttons">
+            <button id="delete_cancel_button" onclick="closeDeletePizzaForm()">No(Keep)</button>
+            <button id="delete_button" type="submit" name="pizza_delete" value="pizza_delete">Yes(Delete)</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function openChangePizzaNameForm() {
+        closeAllForms()
+        document.getElementById("change_name_pizza_form").style.display = "block"
+    }
+    function closeChangePizzaNameForm() {
+        document.getElementById("new_name_field").value = ""
+        document.getElementById("change_name_pizza_form").style.display = "none"
+    }
+
+    function openDeletePizzaForm() {
+        closeAllForms()
+        document.getElementById("delete_pizza_form").style.display = "block"
+    }
+    function closeDeletePizzaForm() {
+        document.getElementById("delete_pizza_form").style.display = "none"
+    }
+
+    function closeAllForms() {
+        closeChangePizzaNameForm()
+        closeDeletePizzaForm()
+    }
+</script>
+
+{% endblock %}
