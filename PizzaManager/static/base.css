@@ -6,6 +6,12 @@ body {
     background-color: blueviolet;
 }
 
+ul {
+    text-align: center;
+    list-style-position: inside;
+    padding-right: 20%;
+}
+
 .block {
     background-color: aliceblue;
 
@@ -32,8 +38,25 @@ body {
     min-width: 120px;
     min-height: 40px;
     font-size: 125%;
+    background-color: lavender;
+    color: black;
+    text-decoration: none;
+}
+
+.lower {
+    margin-top: 5%;
+    margin-bottom: -5%;
 }
 
 .popForm {
     display: none
+}
+
+.reduce-horizontal {
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+#new_pizza {
+    background-color: aquamarine;
 }
