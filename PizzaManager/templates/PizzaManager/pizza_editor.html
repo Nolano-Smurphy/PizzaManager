@@ -7,13 +7,13 @@
 <h1>{{ pizza.name }}</h1>
 {% if error_message %}<p><b>ERROR: {{ error_message }}</b></p>{% endif %}
 
-<fieldset id="pizzaChanges">
+<fieldset id="pizzaChanges" class="reduce-horizontal">
     <legend>Pizza</legend>
     <button id="edit_name" onclick="openChangePizzaNameForm()">Rename Pizza</button>
     <button id="delete_pizza" onclick="openDeletePizzaForm()">Delete Pizza</button>
 </fieldset><br>
 
-<fieldset id="toppingsChanges">
+<fieldset id="toppingsChanges" class="reduce-horizontal">
     <legend>Toppings</legend>
     {% for topping in pizza.toppings.all %}
         <label>{{ topping.name }}</label>
