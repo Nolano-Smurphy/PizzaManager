@@ -80,41 +80,38 @@ def pizza_editor(request, pizza_id):
     # Should never occur on production if I did this right.
     except(KeyError):
         logging.exception(KeyError.__traceback__)
-        return render(
-                request,
-                "PizzaManager/pizza_editor.html",
-                {
-                    "pizza": pizza,
-                    "error_message": "Internal Error occurred. Contact Nolan Murphy about resolving this.",
-                },
+        return createPizzaErrorReply(
+                request, 
+                pizza, 
+                destination="PizzaManager/pizza_editor.html",
+                error_message="Internal Error occurred. Contact Nolan Murphy about resolving this."
             )
     
     except (Pizza.DoesNotExist):
-        return render(
-            request,
-            "PizzaManager/pizza_editor.html",
-            {
-                "pizza": pizza,
-                "error_message": "You have attempted to alter a pizza that does not exist.",
-            },
-        )
+        return createPizzaErrorReply(
+                request, 
+                pizza, 
+                destination="PizzaManager/pizza_editor.html",
+                error_message="You have attempted to alter a pizza that does not exist."
+            )
     
     except (Topping.DoesNotExist):
-        return render(
-            request,
-            "PizzaManager/pizza_editor.html",
-            {
-                "pizza": pizza,
-                "error_message": "You have attempted to alter a topping that does not exist.",
-            },
-        )
+        return createPizzaErrorReply(
+                request, 
+                pizza, 
+                destination="PizzaManager/pizza_editor.html",
+                error_message="You have attempted to alter a topping that does not exist."
+            )
+    
     # Exceptions hopefully won't occur, but it's better to be prepared.
     else:
         return HttpResponseRedirect(reverse("PizzaManager:Pizza Editor", args=(pizza.id,)))
 
-def hasSpecialChar(data_to_validate : str):
+def hasSpecialChar(data_to_validate : str) -> bool:
     """
-    Helper method to make sure the string passed in contains no special characters.
+    Helper method to make sure the string passed in contains only alpha-numeric characters (blank spaces are permissible).
+    @param data_to_validate: String to be evaluated for special characters.
+    @return `True` if a special character is found. Otherwise returns `False`.
     """
     
     for char in data_to_validate:
@@ -123,13 +120,14 @@ def hasSpecialChar(data_to_validate : str):
 
     return False
 
-def createPizzaErrorReply(request, pizza, destination : str, error_message : str):
+def createPizzaErrorReply(request, pizza, destination : str, error_message : str) -> HttpResponse:
     """
     Helper method for generating error repsonses to the website.
     @param request: Pass in the `request` this is responding to.
     @param pizza: The pizza relevant to the request.
     @param destination: Link to send response to.
     @param error_message: Message communicating what went wrong when processing the request.
+    @return An HTTP response with an error message
     """
     return render(
         request,
