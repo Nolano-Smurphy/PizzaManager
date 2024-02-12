@@ -49,16 +49,29 @@ def pizza_editor(request, pizza_id):
     try:
         # Process name changes
         if "pizza_name_change" in request.POST:
-            if request.POST["new_name"] != "":
-                if not hasSpecialChar(request.POST["new_name"]):
-                    pizza.name = request.POST["new_name"]
-                    pizza.save()
+            new_name = request.POST["new_name"]
+            # Check if the new name is an empty string or composed of all white space.
+            if new_name.strip() != "":
+                # Check for special characters.
+                if not hasSpecialChar(new_name):
+                    # Check for any duplicate entries that already exist.
+                    if not any(new_name == object.name for object in Pizza.objects.all()):
+                        pizza.name = new_name
+                        pizza.save()
+                    else:
+                        return createPizzaErrorReply(
+                            request, 
+                            pizza, 
+                            destination="PizzaManager/pizza_editor.html",
+                            error_message="A pizza with this name already exists. Please enter a unique name. Name unchanged."
+                        )
+
                 else:
                     return createPizzaErrorReply(
                         request, 
                         pizza, 
                         destination="PizzaManager/pizza_editor.html",
-                        error_message="Please do not include any special characters in the pizza name."
+                        error_message="Please do not include any special characters in the pizza name. Name unchanged."
                     )
             else:
                 return createPizzaErrorReply(
@@ -70,6 +83,20 @@ def pizza_editor(request, pizza_id):
 
         # Process pizza deletions
         elif "pizza_delete" in request.POST:
+            pizza.delete()
+            return HttpResponseRedirect(reverse("PizzaManager:Pizza Overview"))
+        
+        # Process topping changes
+        elif "pizza_topping_change" in request.POST:
+            return createPizzaErrorReply(
+                request, 
+                pizza, 
+                destination="PizzaManager/pizza_editor.html",
+                error_message="This feature has not been implemented yet."
+            )
+        
+        # Process topping removals
+        elif "pizza_topping_delete" in request.POST:
             return createPizzaErrorReply(
                 request, 
                 pizza, 
@@ -127,7 +154,7 @@ def createPizzaErrorReply(request, pizza, destination : str, error_message : str
     @param pizza: The pizza relevant to the request.
     @param destination: Link to send response to.
     @param error_message: Message communicating what went wrong when processing the request.
-    @return An HTTP response with an error message
+    @return An HttpResponse with the `error_message`.
     """
     return render(
         request,
