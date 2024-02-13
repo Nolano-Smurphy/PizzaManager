@@ -1,6 +1,8 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.views import generic
+
 import logging
 
 from .models import Topping, Pizza
@@ -12,13 +14,16 @@ def index(request):
     """
     return HttpResponse(render(request, "PizzaManager/landing_page.html"))
 
-def toppings_overview(request):
+class ToppingsOverview(generic.ListView):
     """
     This is the view responsible for providing a list of all available toppings to the Owner.
     """
-    toppings_list = Topping.objects.order_by("name")[:10]
-    context = {"toppings_list": toppings_list}
-    return HttpResponse(render(request, "PizzaManager/toppings_overview.html", context))
+    template_name = "PizzaManager/toppings_overview.html"
+    context_object_name = "toppings_list"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Topping.objects.all()
 
 def toppings_editor(request, topping_id):
     """
@@ -27,13 +32,16 @@ def toppings_editor(request, topping_id):
     topping = get_object_or_404(Topping, pk=topping_id)
     return render(request, "PizzaManager/toppings_editor.html", {"topping": topping})
 
-def pizza_overview(request):
+class PizzaOverview(generic.ListView):
     """
     This is the view responsible for providing a list of all available pizzas to the Chef.
     """
-    pizzas_list = Pizza.objects.order_by("name")[:5]
-    context = {"pizzas_list": pizzas_list}
-    return HttpResponse(render(request, "PizzaManager/pizza_overview.html", context))
+    template_name = "PizzaManager/pizza_overview.html"
+    context_object_name = "pizzas_list"
+    paginate_by = 5
+
+    def get_queryset(self):
+        return Pizza.objects.all()
 
 def pizza_editor(request, pizza_id):
     """
