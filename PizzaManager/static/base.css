@@ -57,6 +57,6 @@ ul {
     margin-right: 30%;
 }
 
-#new_pizza {
+#new_pizza, #new_topping {
     background-color: aquamarine;
 }
