@@ -5,8 +5,8 @@ from . import views
 app_name = "PizzaManager"
 urlpatterns = [
     path("", views.index, name="index"),
-    path("toppings/", views.toppings_overview, name="Toppings Overview"),
+    path("toppings/", views.ToppingsOverview.as_view(), name="Toppings Overview"),
     path("toppings/<int:topping_id>/", views.toppings_editor, name="Toppings Editor"),
-    path("pizza/", views.pizza_overview, name="Pizza Overview"),
+    path("pizza/", views.PizzaOverview.as_view(), name="Pizza Overview"),
     path("pizza/<int:pizza_id>/", views.pizza_editor, name="Pizza Editor"),
 ]
