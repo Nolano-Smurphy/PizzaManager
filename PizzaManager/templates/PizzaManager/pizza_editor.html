@@ -17,10 +17,10 @@
         <legend>Toppings</legend>
         {% for topping in pizza.toppings.all %}
             <label>{{ topping.name }}</label>
-            <button id="change_topping_{{forloop.counter}}" onclick="">Change</button>
-            <button id="delete_topping_{{forloop.counter}}" onclick="">Remove</button><br><br>
+            <button id="change_topping_{{forloop.counter}}" onclick="openChangeToppingForm()">Change</button>
+            <button id="delete_topping_{{forloop.counter}}" name="delete_{{topping.name}}" onclick="openDeleteToppingForm(this)">Remove</button><br><br>
         {% endfor %}
-        <button id="add_topping" onclick="">Add Topping</button>
+        <button id="add_topping" onclick="openAddToppingForm()">Add Topping</button>
     </fieldset>
 
     <!-- All forms will not be visible unless specifically requested by button. -->
@@ -52,6 +52,57 @@
         </form>
     </div>
 
+    <div id="add_pizza_topping_form" class="popForm">
+        <form action="{% url 'PizzaManager:Pizza Editor' pizza.id%}" method="post">
+            {% csrf_token %}
+            <h2>Add Topping</h2>
+            <p>Which topping would you like to add?</p>
+            <select id="toppings_options" name="toppings_options" onChange="validateOptions()">
+                {% for topping in toppings_list %}
+                    <option id="topping_{{forloop.counter}}" name="{{topping.name}}" value="{{topping.name}}">
+                        {{topping.name}}
+                    </option>
+                {% endfor %}
+            </select>
+            <div id="add_topping_buttons">
+                <button id="add_topping_cancel_button" onclick="closeAddToppingForm()">Cancel</button>
+                <button id="add_topping_button" type="submit" name="pizza_topping_add" value="pizza_topping_add">Add</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="change_pizza_topping_form" class="popForm">
+        <form action="{% url 'PizzaManager:Pizza Editor' pizza.id%}" method="post">
+            {% csrf_token %}
+            <h2>Swap Topping</h2>
+            <p>Which topping would you like to swap to?</p>
+            <select id="toppings_options" name="toppings_options" onChange="validateOptions()">
+                {% for topping in toppings_list %}
+                    <option id="topping_{{forloop.counter}}" name="{{topping.name}}" value="{{topping.name}}">
+                        {{topping.name}}
+                    </option>
+                {% endfor %}
+            </select>
+            <div id="change_topping_buttons">
+                <button id="change_topping_cancel_button" onclick="closeChangeToppingForm()">Cancel</button>
+                <button id="change_topping_button" type="submit" name="pizza_topping_change" value="pizza_topping_change">Save</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="delete_pizza_topping_form" class="popForm">
+        <form action="{% url 'PizzaManager:Pizza Editor' pizza.id%}" method="post">
+            {% csrf_token %}
+            <h2>Delete Topping</h2>
+            <p id="delete_prompt"></p>
+            <input id="deleted_topping" name="deleted_topping" type="hidden" value="">
+            <div id="delete_buttons">
+                <button id="delete_topping_cancel_button" onclick="closeDeleteToppingForm()">No(Keep)</button>
+                <button id="delete_topping_button" type="submit" name="pizza_topping_delete" value="pizza_topping_delete">Yes(Delete)</button>
+            </div>
+        </form>
+    </div>
+
     <script>
         function openChangePizzaNameForm() {
             closeAllForms()
@@ -70,9 +121,23 @@
             document.getElementById("delete_pizza_form").style.display = "none"
         }
 
+        function openDeleteToppingForm(node) {
+            closeAllForms()
+            document.getElementById("delete_pizza_topping_form").style.display = "block"
+
+            let topping_name = node.getAttribute("name").split("_")[1]
+            document.getElementById("delete_prompt").textContent = "Are you sure you wish to delete " + topping_name + " from this pizza?"
+
+            document.getElementById("deleted_topping").setAttribute("value", topping_name)
+        }
+        function closeDeleteToppingForm() {
+            document.getElementById("delete_pizza_topping_form").style.display = "none"
+        }
+
         function closeAllForms() {
             closeChangePizzaNameForm()
             closeDeletePizzaForm()
+            closeDeleteToppingForm()
         }
     </script>
 

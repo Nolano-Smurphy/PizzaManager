@@ -48,10 +48,16 @@ def pizza_editor(request, pizza_id):
     This is the view responsible for handling all changes that might need to occur to a pizza.
     """
     pizza = get_object_or_404(Pizza, pk=pizza_id)
+    toppings_list = Topping.objects.all()
 
     #Guard statement to ensure GET requests can be processed quickly.
     if request.method =='GET':
-        return render(request, "PizzaManager/pizza_editor.html", {"pizza": pizza})
+        return render(request, "PizzaManager/pizza_editor.html",
+                        {
+                          "pizza": pizza,
+                          "toppings_list": toppings_list
+                        }
+                      )
     
     # Requests, by this point, should be exclusively POST requests and will take time to process.
     try:
@@ -94,6 +100,14 @@ def pizza_editor(request, pizza_id):
             pizza.delete()
             return HttpResponseRedirect(reverse("PizzaManager:Pizza Overview"))
         
+        elif "pizza_topping_add" in request.POST:
+            return pizzaErrorReply(
+                request,
+                pizza,
+                destination="PizzaManager/pizza_editor.html",
+                error_message="This feature has not been implemented yet."
+            )
+
         # Process topping changes
         elif "pizza_topping_change" in request.POST:
             return pizzaErrorReply(
@@ -105,12 +119,9 @@ def pizza_editor(request, pizza_id):
         
         # Process topping removals
         elif "pizza_topping_delete" in request.POST:
-            return pizzaErrorReply(
-                request,
-                pizza,
-                destination="PizzaManager/pizza_editor.html",
-                error_message="This feature has not been implemented yet."
-            )
+            deleted_topping = request.POST["deleted_topping"]
+            pizza.toppings.remove(Topping.objects.get(name=deleted_topping))
+            return HttpResponseRedirect(reverse("PizzaManager:Pizza Editor", args=(pizza.id,)))
 
     # Should never occur on production if I did this right.
     except(KeyError):
