@@ -112,20 +112,37 @@ def pizza_editor(request, pizza_id):
                         topping_list=Topping.objects.all().order_by("name"),
                         pizza=pizza,
                         destination="PizzaManager/pizza_editor.html",
-                        error_message="The toppping " + new_topping + " is already on this pizza."
+                        error_message="The toppping " + new_topping + " is already on this pizza. No toppings added."
                     )
             pizza.toppings.add(Topping.objects.get(name=new_topping))
             return HttpResponseRedirect(reverse("PizzaManager:Pizza Editor", args=(pizza.id,)))
 
         # Process topping changes
         elif "pizza_topping_change" in request.POST:
-            return createPizzaErrorReply(
-                request,
-                topping_list=None,
-                pizza=pizza,
-                destination="PizzaManager/pizza_editor.html",
-                error_message="This feature has not been implemented yet."
-            )
+            new_topping = request.POST["toppings_options"]
+            old_topping = request.POST["prior_topping"]
+            
+            if old_topping == new_topping:
+                return createPizzaErrorReply(
+                    request,
+                    topping_list=Topping.objects.all().order_by("name"),
+                    pizza=pizza,
+                    destination="PizzaManager/pizza_editor.html",
+                    error_message="This topping is being replaced with itself. No change made."
+                )
+            if pizza.toppings.filter(name=new_topping).exists():
+                return createPizzaErrorReply(
+                    request,
+                    topping_list=Topping.objects.all().order_by("name"),
+                    pizza=pizza,
+                    destination="PizzaManager/pizza_editor.html",
+                    error_message="The toppping " + new_topping + " is already on this pizza. No change made."
+                )
+
+            pizza.toppings.remove(Topping.objects.get(name=old_topping))
+            pizza.toppings.add(Topping.objects.get(name=new_topping))
+            return HttpResponseRedirect(reverse("PizzaManager:Pizza Editor", args=(pizza.id,)))
+
         
         # Process topping removals
         elif "pizza_topping_delete" in request.POST:
