@@ -114,14 +114,14 @@ def pizza_editor(request, pizza_id):
                         destination="PizzaManager/pizza_editor.html",
                         error_message="The toppping " + new_topping + " is already on this pizza. No toppings added."
                     )
-            pizza.toppings.add(Topping.objects.get(name=new_topping))
+            pizza.toppings.add(get_object_or_404(Topping, name=new_topping))
             return HttpResponseRedirect(reverse("PizzaManager:Pizza Editor", args=(pizza.id,)))
 
         # Process topping changes
         elif "pizza_topping_change" in request.POST:
             new_topping = request.POST["toppings_options"]
             old_topping = request.POST["prior_topping"]
-            
+
             if old_topping == new_topping:
                 return createPizzaErrorReply(
                     request,
@@ -139,15 +139,15 @@ def pizza_editor(request, pizza_id):
                     error_message="The toppping " + new_topping + " is already on this pizza. No change made."
                 )
 
-            pizza.toppings.remove(Topping.objects.get(name=old_topping))
-            pizza.toppings.add(Topping.objects.get(name=new_topping))
+            pizza.toppings.remove(get_object_or_404(Topping, name=old_topping))
+            pizza.toppings.add(get_object_or_404(Topping, name=new_topping))
             return HttpResponseRedirect(reverse("PizzaManager:Pizza Editor", args=(pizza.id,)))
 
         
         # Process topping removals
         elif "pizza_topping_delete" in request.POST:
             deleted_topping = request.POST["deleted_topping"]
-            pizza.toppings.remove(Topping.objects.get(name=deleted_topping))
+            pizza.toppings.remove(get_object_or_404(Topping, name=deleted_topping))
             return HttpResponseRedirect(reverse("PizzaManager:Pizza Editor", args=(pizza.id,)))
 
     # Should never occur on production if I did this right.
@@ -202,7 +202,7 @@ def pizza_create(request):
                         new_pizza.save()
                         for topping in request.POST.getlist("toppings_options"):
                             logging.warning("Adding %s to a pizza." % topping)
-                            topping_to_add = Topping.objects.get(name=topping)
+                            topping_to_add = get_object_or_404(Topping, name=topping)
                             new_pizza.toppings.add(topping_to_add)
                         new_pizza.save()
                         return HttpResponseRedirect(reverse("PizzaManager:Pizza Overview"))
