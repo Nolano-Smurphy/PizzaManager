@@ -63,7 +63,7 @@
                         {{topping.name}}
                     </option>
                 {% endfor %}
-            </select>
+            </select><br>
             <div id="add_topping_buttons">
                 <button id="add_topping_cancel_button" onclick="closeAddToppingForm()">Cancel</button>
                 <button id="add_topping_button" type="submit" name="pizza_topping_add" value="pizza_topping_add">Add</button>
@@ -119,6 +119,15 @@
         }
         function closeDeletePizzaForm() {
             document.getElementById("delete_pizza_form").style.display = "none"
+        }
+
+
+        function openAddToppingForm() {
+            closeAllForms()
+            document.getElementById("add_pizza_topping_form").style.display = "block"
+        }
+        function closeAddToppingForm() {
+            document.getElementById("add_pizza_topping_form").style.display = "none"
         }
 
         function openDeleteToppingForm(node) {
