@@ -1,0 +1,116 @@
+{% extends "PizzaManager/default_page.html" %}
+{% block title %}Pizza Creator{% endblock %}
+{% block css %}<link rel="stylesheet" href="../static/base.css">{% endblock %}
+{% block content %}
+    <div id="new_pizza_form">
+        <form action="{% url 'PizzaManager:Pizza Create' %}" method="post">
+            {% csrf_token %}
+            <h2>Create New Pizza</h2>
+            {% if error_message %}<p><b>ERROR: {{ error_message }}</b></p>{% endif %}
+            <fieldset id="new_name_field">
+                <legend>Name</legend>
+                <label for="new_pizza_name">Pizza Name:</label>
+                <input id="new_pizza_name" name="new_pizza_name" type="textfield" maxlength="25">
+            </fieldset>
+            <fieldset id="new_toppings_field">
+                <legend>Toppings</legend>
+                <button id="add_topping_to_pizza" type="button" onclick="addTopping()">Add Topping</button>
+            </fieldset><br>
+            <div id="new_buttons">
+                <button id="new_cancel_button" type="submit" name="cancel_pizza_new" value="cancel_pizza_new" onclick="closeNewPizzaForm()">Cancel</button>
+                <button id="new_button" type="submit" name="pizza_new" value="pizza_new">Save</button>
+            </div>
+        </form>
+
+        <!--Used as a template for actions performed in the form. Should NEVER be visible.-->
+        <div id="topping_base" class="hidden">
+            {% if toppings_list %}
+                <label>Add Topping:</label>
+                <select id="toppings_options" name="toppings_options" onChange="validateOptions()">
+                    {% for topping in toppings_list %}
+                        <option id="topping_{{forloop.counter}}" name="{{topping.name}}" value="{{topping.name}}">
+                            {{topping.name}}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button id="remove_topping_{{forloop.counter}}" type="button" onclick="removeTopping(this)">Remove</button><br>
+            {% else %}
+                <p>No toppings are currently available.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+
+        var added_toppings = 0
+        var current_toppings_set = new Set()
+
+        function addTopping() {
+            let NewDOMTopping = document.getElementById("topping_base").cloneNode(true)
+            added_toppings = added_toppings + 1
+            NewDOMTopping.setAttribute("id", "topping_div" + window.added_toppings)
+            NewDOMTopping.setAttribute("class", "deletable")
+            document.getElementById("new_toppings_field").appendChild(NewDOMTopping)
+            validateOptions()
+        }
+
+        function removeTopping(Node) {
+            let parentDiv = Node.parentNode
+            parentDiv.parentNode.removeChild(parentDiv)
+        }
+
+        function closeNewPizzaForm() {
+            let pizza_name = document.getElementById("new_pizza_name")
+            let topping_set = document.getElementById("new_toppings_field")
+
+            pizza_name.value = ""
+
+            Array.from(topping_set.children).forEach(function(child) {
+                if (child.getAttribute("class") == "deletable") {
+                    topping_set.removeChild(child)
+                }
+            })
+        }
+
+        function updateToppingsSet() {
+            let topping_div = document.getElementById("new_toppings_field")
+            Array.from(topping_div.children).forEach(function(child) {
+                if (child.getAttribute("class") == "deletable") {
+                    current_toppings_set.add(child.getElementsByTagName("select")[0].selectedIndex)
+                }
+            })
+            current_toppings_set.forEach(function(index) {
+                not_used = true
+                Array.from(topping_div.children).forEach(function(child_) {
+                    if (child_.getAttribute("class") == "deletable") {
+                        if (child_.getElementsByTagName("select")[0].selectedIndex == index) {
+                            not_used = false
+                        }
+                    }
+                })
+                if (not_used) {
+                    current_toppings_set.delete(index)
+                }
+            })
+        }
+
+        function validateOptions() {
+            updateToppingsSet()
+            document.getElementsByName("toppings_options").forEach(function(select_element) {
+                //This will disable any toppings already selected and enable any non-selected toppings.
+                for (let iterator = 0; iterator < select_element.options.length; iterator++) {
+                    if (current_toppings_set.has(iterator)) {
+                        select_element.options[iterator].disabled = true
+                    }
+                    else {
+                        select_element.options[iterator].disabled = false
+                    }
+                }
+                //This is a second pass to ensure the currently selected element is NOT disabled.
+                select_element.options[select_element.selectedIndex].disabled = false
+            })
+        }
+
+    </script>
+
+{% endblock %}

@@ -23,7 +23,7 @@ class ToppingsOverview(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return Topping.objects.all()
+        return Topping.objects.all().order_by("name")
 
 def toppings_editor(request, topping_id):
     """
@@ -41,7 +41,7 @@ class PizzaOverview(generic.ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        return Pizza.objects.all()
+        return Pizza.objects.all().order_by("name")
 
 def pizza_editor(request, pizza_id):
     """
@@ -67,24 +67,24 @@ def pizza_editor(request, pizza_id):
                         pizza.name = new_name
                         pizza.save()
                     else:
-                        return createPizzaErrorReply(
-                            request, 
-                            pizza, 
+                        return pizzaErrorReply(
+                            request,
+                            pizza,
                             destination="PizzaManager/pizza_editor.html",
                             error_message="A pizza with this name already exists. Please enter a unique name. Name unchanged."
                         )
 
                 else:
-                    return createPizzaErrorReply(
-                        request, 
-                        pizza, 
+                    return pizzaErrorReply(
+                        request,
+                        pizza,
                         destination="PizzaManager/pizza_editor.html",
                         error_message="Please do not include any special characters in the pizza name. Name unchanged."
                     )
             else:
-                return createPizzaErrorReply(
-                    request, 
-                    pizza, 
+                return pizzaErrorReply(
+                    request,
+                    pizza,
                     destination="PizzaManager/pizza_editor.html",
                     error_message="Received blank. Name unchanged."
                 )
@@ -96,18 +96,18 @@ def pizza_editor(request, pizza_id):
         
         # Process topping changes
         elif "pizza_topping_change" in request.POST:
-            return createPizzaErrorReply(
-                request, 
-                pizza, 
+            return pizzaErrorReply(
+                request,
+                pizza,
                 destination="PizzaManager/pizza_editor.html",
                 error_message="This feature has not been implemented yet."
             )
         
         # Process topping removals
         elif "pizza_topping_delete" in request.POST:
-            return createPizzaErrorReply(
-                request, 
-                pizza, 
+            return pizzaErrorReply(
+                request,
+                pizza,
                 destination="PizzaManager/pizza_editor.html",
                 error_message="This feature has not been implemented yet."
             )
@@ -115,25 +115,25 @@ def pizza_editor(request, pizza_id):
     # Should never occur on production if I did this right.
     except(KeyError):
         logging.exception(KeyError.__traceback__)
-        return createPizzaErrorReply(
-                request, 
-                pizza, 
+        return pizzaErrorReply(
+                request,
+                pizza,
                 destination="PizzaManager/pizza_editor.html",
                 error_message="Internal Error occurred. Contact Nolan Murphy about resolving this."
             )
     
     except (Pizza.DoesNotExist):
-        return createPizzaErrorReply(
-                request, 
-                pizza, 
+        return pizzaErrorReply(
+                request,
+                pizza,
                 destination="PizzaManager/pizza_editor.html",
                 error_message="You have attempted to alter a pizza that does not exist."
             )
     
     except (Topping.DoesNotExist):
-        return createPizzaErrorReply(
-                request, 
-                pizza, 
+        return pizzaErrorReply(
+                request,
+                pizza,
                 destination="PizzaManager/pizza_editor.html",
                 error_message="You have attempted to alter a topping that does not exist."
             )
@@ -141,6 +141,61 @@ def pizza_editor(request, pizza_id):
     # Exceptions hopefully won't occur, but it's better to be prepared.
     else:
         return HttpResponseRedirect(reverse("PizzaManager:Pizza Editor", args=(pizza.id,)))
+    
+def pizza_create(request):
+
+    toppings_list = Topping.objects.all()
+
+    if request.method =='GET':
+        context = {"toppings_list": toppings_list}
+        return render(request, "PizzaManager/pizza_new.html", context)
+
+    # Process POST requests
+    try:
+        if "pizza_new" in request.POST:
+            pizza_name = request.POST["new_pizza_name"]
+            if pizza_name.strip() != "":
+                if not hasSpecialChar(pizza_name):
+                    if not any(pizza_name == object.name for object in Pizza.objects.all()):
+                        new_pizza = Pizza(name=pizza_name)
+                        new_pizza.save()
+                        for topping in request.POST.getlist("toppings_options"):
+                            logging.warning("Adding %s to a pizza." % topping)
+                            topping_to_add = Topping.objects.get(name=topping)
+                            new_pizza.toppings.add(topping_to_add)
+                        new_pizza.save()
+                        return HttpResponseRedirect(reverse("PizzaManager:Pizza Overview"))
+                    else:
+                        return createPizzaErrorReply(
+                            request, 
+                            toppings_list, 
+                            destination="PizzaManager/pizza_new.html",
+                            error_message="A pizza with this name already exists. Please enter a unique name. No pizza created."
+                        )
+                else:
+                    return createPizzaErrorReply(
+                        request, 
+                        toppings_list, 
+                        destination="PizzaManager/pizza_new.html",
+                        error_message="Please do not include any special characters in the pizza name. No pizza created."
+                    )
+            else:
+                return createPizzaErrorReply(
+                    request, 
+                    toppings_list, 
+                    destination="PizzaManager/pizza_new.html",
+                    error_message="Received blank. No pizza created."
+                )
+        elif "cancel_pizza_new" in request.POST:
+            return HttpResponseRedirect(reverse("PizzaManager:Pizza Overview"))
+
+    except (KeyError):
+        return createPizzaErrorReply(
+            request,
+            toppings_list,
+            destination="PizzaManager/pizza_new.html",
+            error_message="Internal Error occurred. Contact Nolan Murphy about resolving this."
+        )
 
 def hasSpecialChar(data_to_validate : str) -> bool:
     """
@@ -155,10 +210,10 @@ def hasSpecialChar(data_to_validate : str) -> bool:
 
     return False
 
-def createPizzaErrorReply(request, pizza, destination : str, error_message : str) -> HttpResponse:
+def pizzaErrorReply(request, pizza, destination : str, error_message : str) -> HttpResponse:
     """
     Helper method for generating error repsonses to the website.
-    @param request: Pass in the `request` this is responding to.
+    @param request: Pass in the `request` used as a template reference.
     @param pizza: The pizza relevant to the request.
     @param destination: Link to send response to.
     @param error_message: Message communicating what went wrong when processing the request.
@@ -169,6 +224,24 @@ def createPizzaErrorReply(request, pizza, destination : str, error_message : str
         destination,
         {
             "pizza": pizza,
+            "error_message": error_message,
+        },
+    )
+
+def createPizzaErrorReply(request, toppings_list, destination : str, error_message : str) -> HttpResponse:
+    """
+    Helper method for generating error repsonses for creating pizzas.
+    @param request: Pass in the `request` used as a template reference.
+    @param toppings_list: The toppings available for pizza creation.
+    @param destination: Link to send response to.
+    @param error_message: Message communicating what went wrong when processing the request.
+    @return An HttpResponse with the `error_message`.
+    """
+    return render(
+        request,
+        destination,
+        {
+            "toppings_list": toppings_list,
             "error_message": error_message,
         },
     )

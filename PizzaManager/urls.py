@@ -9,4 +9,5 @@ urlpatterns = [
     path("toppings/<int:topping_id>/", views.toppings_editor, name="Toppings Editor"),
     path("pizza/", views.PizzaOverview.as_view(), name="Pizza Overview"),
     path("pizza/<int:pizza_id>/", views.pizza_editor, name="Pizza Editor"),
+    path("pizza/new", views.pizza_create, name="Pizza Create"),
 ]

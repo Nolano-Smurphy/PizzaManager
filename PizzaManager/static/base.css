@@ -43,6 +43,10 @@ ul {
     text-decoration: none;
 }
 
+.hidden {
+    display: none
+}
+
 .lower {
     margin-top: 5%;
     margin-bottom: -5%;

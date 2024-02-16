@@ -1,6 +1,6 @@
 {% extends "PizzaManager/default_page.html" %}
 {% block title %}Pizza Overview{% endblock %}
-{% block css %}<link rel="stylesheet" href="../static/base.css">{% endblock %}
+{% block css %}<link rel="stylesheet" href="../../static/base.css">{% endblock %}
 {% block content %}
     <h1>Welcome back, Chef!</h1>
     {% if pizzas_list %}
@@ -23,5 +23,15 @@
     {% else %}
         <p>No pizzas are available. Would you like to add one?</p>
     {% endif %}
-    <a id="new_pizza" class="button add" href="/pizza/new">Add Pizza</a>
+    <a id="new_pizza" class="button add" href="{% url 'PizzaManager:Pizza Create' %}">Add Pizza</a>
+
+    <script>
+        function openNewPizzaForm() {
+            closeNewPizzaForm()
+            document.getElementById("new_pizza_form").style.display = "block"
+        }
+        function closeNewPizzaForm() {
+            document.getElementById("new_pizza_form").style.display = "none"
+        }
+    </script>
 {% endblock %}
