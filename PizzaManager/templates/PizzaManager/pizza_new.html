@@ -7,16 +7,16 @@
             {% csrf_token %}
             <h2>Create New Pizza</h2>
             {% if error_message %}<p><b>ERROR: {{ error_message }}</b></p>{% endif %}
-            <fieldset id="new_name_field">
+            <fieldset id="new_name_field" class="reduce-horizontal">
                 <legend>Name</legend>
                 <label for="new_pizza_name">Pizza Name:</label>
                 <input id="new_pizza_name" name="new_pizza_name" type="textfield" maxlength="25">
             </fieldset>
-            <fieldset id="new_toppings_field">
+            <fieldset id="new_toppings_field" class="reduce-horizontal">
                 <legend>Toppings</legend>
                 <button id="add_topping_to_pizza" type="button" onclick="addTopping()">Add Topping</button>
             </fieldset><br>
-            <div id="new_buttons">
+            <div id="new_pizza_buttons">
                 <button id="new_cancel_button" type="submit" name="cancel_pizza_new" value="cancel_pizza_new" onclick="closeNewPizzaForm()">Cancel</button>
                 <button id="new_button" type="submit" name="pizza_new" value="pizza_new">Save</button>
             </div>

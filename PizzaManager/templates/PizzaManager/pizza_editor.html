@@ -9,7 +9,7 @@
 
     <fieldset id="pizzaChanges" class="reduce-horizontal">
         <legend>Pizza</legend>
-        <button id="edit_name" onclick="openChangePizzaNameForm()">Rename Pizza</button>
+        <button id="edit_pizza_name" onclick="openChangePizzaNameForm()">Rename Pizza</button>
         <button id="delete_pizza" onclick="openDeletePizzaForm()">Delete Pizza</button>
     </fieldset><br>
 
@@ -34,7 +34,7 @@
             <label for="new_name_field">New Pizza Name:</label><br>
             <input id="new_name_field" name="new_name" type="textfield" maxlength="25">
             <div id="change_name_buttons">
-                <button id="change_name_cancel_button" onclick="closeChangePizzaNameForm()">Cancel</button>
+                <button id="change_name_cancel_button" type="button" onclick="closeChangePizzaNameForm()">Cancel</button>
                 <button id="change_name_save_button" type="submit" name="pizza_name_change" value="pizza_name_change">Save</button>
             </div>
         </form>
@@ -46,7 +46,7 @@
             <h2>Delete Pizza</h2>
             <p>Are you sure you wish to delete <b>{{pizza.name}}</b>?</p>
             <div id="delete_buttons">
-                <button id="delete_cancel_button" onclick="closeDeletePizzaForm()">No(Keep)</button>
+                <button id="delete_cancel_button" type="button" onclick="closeDeletePizzaForm()">No(Keep)</button>
                 <button id="delete_button" type="submit" name="pizza_delete" value="pizza_delete">Yes(Delete)</button>
             </div>
         </form>
@@ -65,7 +65,7 @@
                 {% endfor %}
             </select><br><br>
             <div id="add_topping_buttons">
-                <button id="add_topping_cancel_button" onclick="closeAddToppingForm()">Cancel</button>
+                <button id="add_topping_cancel_button" type="button" onclick="closeAddToppingForm()">Cancel</button>
                 <button id="add_topping_button" type="submit" name="pizza_topping_add" value="pizza_topping_add">Add</button>
             </div>
         </form>
@@ -87,7 +87,7 @@
             </select><br><br>
             <input id="prior_topping" name="prior_topping" type="hidden" value="">
             <div id="change_topping_buttons">
-                <button id="change_topping_cancel_button" onclick="closeChangeToppingForm()">Cancel</button>
+                <button id="change_topping_cancel_button" type="button" onclick="closeChangeToppingForm()">Cancel</button>
                 <button id="change_topping_button" type="submit" name="pizza_topping_change" value="pizza_topping_change">Save</button>
             </div>
         </form>
@@ -100,7 +100,7 @@
             <p id="delete_prompt"></p>
             <input id="deleted_topping" name="deleted_topping" type="hidden" value="">
             <div id="delete_buttons">
-                <button id="delete_topping_cancel_button" onclick="closeDeleteToppingForm()">No(Keep)</button>
+                <button id="delete_topping_cancel_button" type="button" onclick="closeDeleteToppingForm()">No(Keep)</button>
                 <button id="delete_topping_button" type="submit" name="pizza_topping_delete" value="pizza_topping_delete">Yes(Delete)</button>
             </div>
         </form>

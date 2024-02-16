@@ -30,7 +30,81 @@ def toppings_editor(request, topping_id):
     This is the view responsible for handling all changes that might need to occur to a topping.
     """
     topping = get_object_or_404(Topping, pk=topping_id)
-    return render(request, "PizzaManager/toppings_editor.html", {"topping": topping})
+
+    if request.method == 'GET':
+        return render(request, "PizzaManager/toppings_editor.html", {"topping": topping})
+    
+    if "topping_name_change" in request.POST:
+        topping_name = request.POST["new_name"]
+        if topping_name.strip() != "":
+            if not hasSpecialChar(topping_name):
+                if not any(topping_name == object.name for object in Topping.objects.all()):
+                    topping.name = topping_name
+                    topping.save()
+                else:
+                    return createToppingErrorReply(
+                        request,
+                        topping=None,
+                        destination="PizzaManager/topping_new.html",
+                        error_message="A topping with this name already exists. Please enter a unique name. Name unchanged."
+                    )
+            else:
+                return createToppingErrorReply(
+                    request,
+                    topping=None,
+                    destination="PizzaManager/topping_new.html",
+                    error_message="Please do not include any special characters in the topping name. Name unchanged."
+                )
+        else:
+            return createToppingErrorReply(
+                request,
+                topping=None,
+                destination="PizzaManager/topping_new.html",
+                error_message="Received blank. Name unchanged."
+            )
+        return HttpResponseRedirect(reverse("PizzaManager:Toppings Overview"))
+    elif "topping_delete" in request.POST:
+        topping.delete()
+        return HttpResponseRedirect(reverse("PizzaManager:Toppings Overview"))
+
+def topping_create(request):
+    """
+    This is the view responsible for adding new toppings.
+    """
+    if request.method =='GET':
+        return render(request, "PizzaManager/topping_new.html")
+
+    if "topping_new" in request.POST:
+            topping_name = request.POST["new_topping_name"]
+            if topping_name.strip() != "":
+                if not hasSpecialChar(topping_name):
+                    if not any(topping_name == object.name for object in Topping.objects.all()):
+                        new_topping = Topping(name=topping_name)
+                        new_topping.save()
+                        return HttpResponseRedirect(reverse("PizzaManager:Toppings Overview"))
+                    else:
+                        return createToppingErrorReply(
+                            request,
+                            topping=None,
+                            destination="PizzaManager/topping_new.html",
+                            error_message="A topping with this name already exists. Please enter a unique name. No topping created."
+                        )
+                else:
+                    return createToppingErrorReply(
+                        request,
+                        topping=None,
+                        destination="PizzaManager/topping_new.html",
+                        error_message="Please do not include any special characters in the topping name. No topping created."
+                    )
+            else:
+                return createToppingErrorReply(
+                    request,
+                    topping=None,
+                    destination="PizzaManager/topping_new.html",
+                    error_message="Received blank. No topping created."
+                )
+    elif "cancel_topping_new" in request.POST:
+        return HttpResponseRedirect(reverse("PizzaManager:Toppings Overview"))
 
 class PizzaOverview(generic.ListView):
     """
@@ -184,6 +258,9 @@ def pizza_editor(request, pizza_id):
         return HttpResponseRedirect(reverse("PizzaManager:Pizza Editor", args=(pizza.id,)))
     
 def pizza_create(request):
+    """
+    This is the view responsible for creatinig new pizzas.
+    """
 
     toppings_list = Topping.objects.all()
 
@@ -255,7 +332,7 @@ def hasSpecialChar(data_to_validate : str) -> bool:
 
     return False
 
-def createPizzaErrorReply(request , topping_list, pizza, destination : str, error_message : str) -> HttpResponse:
+def createPizzaErrorReply(request, topping_list, pizza, destination : str, error_message : str) -> HttpResponse:
     """
     Helper method for generating error repsonses for creating pizzas.
     @param request: Pass in the `request` used as a template reference.
@@ -271,6 +348,24 @@ def createPizzaErrorReply(request , topping_list, pizza, destination : str, erro
         {
             "pizza": pizza,
             "toppings_list": topping_list,
+            "error_message": error_message,
+        },
+    )
+
+def createToppingErrorReply(request, destination : str, topping, error_message : str) -> HttpResponse:
+    """
+    Helper method for generating error repsonses for creating pizzas.
+    @param request: Pass in the `request` used as a template reference.
+    @param destination: Link to send response to.
+    @param topping: The topping relevant to the request.
+    @param error_message: Message communicating what went wrong when processing the request.
+    @return An HttpResponse with the `error_message`.
+    """
+    return render(
+        request,
+        destination,
+        {
+            "topping": topping,
             "error_message": error_message,
         },
     )
