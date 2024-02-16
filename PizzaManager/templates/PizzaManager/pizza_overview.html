@@ -10,13 +10,17 @@
                 <a id="pizza_{{ pizza.id }}" class="button lower" href="{% url 'PizzaManager:Pizza Editor' pizza.id %}">{{ pizza.name }}</a><br>
                 <h4 class="up">Toppings List:</h4>
                 <div id="pizza_{{ pizza.id }}_toppings">
-                    {% for topping in pizza.toppings.all %}
-                        <ul>
-                            <li id="pizza_{{ pizza.id }}_toppings_{{forloop.counter}}">
-                                {{topping.name}}<br>
-                            </li>
-                        </ul>
-                    {% endfor %}
+                    {% if pizza.toppings.all|length > 0 %}
+                        {% for topping in pizza.toppings.all %}
+                            <ul>
+                                <li id="pizza_{{ pizza.id }}_toppings_{{forloop.counter}}">
+                                    {{topping.name}}<br>
+                                </li>
+                            </ul>
+                        {% endfor %}
+                    {% else %}
+                            <p><i>This pizza has no toppings.</i></p>
+                    {% endif %}
                 </div>
             </fieldset><br>
         {% endfor %}
