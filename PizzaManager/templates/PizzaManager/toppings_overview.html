@@ -1,6 +1,15 @@
 {% extends "PizzaManager/default_page.html" %}
 {% block title %}Toppings Overview{% endblock %}
 {% block css %}<link rel="stylesheet" href="../static/base.css">{% endblock %}
+
+{% block navigation_buttons %}
+    <div id="header" class="block bar">
+        <a id="back_to_home" class="button nav" href="{% url 'PizzaManager:index' %}" onclick="closeNewToppingForm()">
+            Home Menu
+        </a>
+    </div><br>
+{% endblock %}
+
 {% block content %}
     <h1>Welcome back, Owner!</h1>
     {% if toppings_list %}

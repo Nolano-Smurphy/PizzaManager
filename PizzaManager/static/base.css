@@ -26,6 +26,11 @@ ul {
     width: 60%;
 }
 
+.bar {
+    background-color: grey;
+    width: 40%;
+}
+
 .button {
     border-style: outset;
     border-color: black;
@@ -50,6 +55,18 @@ ul {
 .lower {
     margin-top: 5%;
     margin-bottom: -5%;
+}
+
+
+.nav {
+    display: inline-block;
+    margin-top: 2%;
+    min-width: 60px;
+    min-height: 30px;
+    width: fit-content;
+    height: fit-content;
+    text-align: center;
+    font-size: 85%;
 }
 
 .popForm {

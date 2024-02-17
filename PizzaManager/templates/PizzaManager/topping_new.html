@@ -1,6 +1,18 @@
 {% extends "PizzaManager/default_page.html" %}
 {% block title %}Topping Creator{% endblock %}
 {% block css %}<link rel="stylesheet" href="../../static/base.css">{% endblock %}
+
+{% block navigation_buttons %}
+    <div id="header" class="block bar">
+        <a id="back_to_overview" class="button nav" href="{% url 'PizzaManager:Toppings Overview' %}" onclick="closeNewToppingForm()">
+            Toppings Menu
+        </a>
+        <a id="back_to_home" class="button nav" href="{% url 'PizzaManager:index' %}" onclick="closeNewToppingForm()">
+            Home Menu
+        </a>
+    </div><br>
+{% endblock %}
+
 {% block content %}
     <div id="new_topping_form">
         <form action="{% url 'PizzaManager:Topping Create' %}" method="post">
