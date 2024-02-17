@@ -44,22 +44,22 @@ def toppings_editor(request, topping_id):
                 else:
                     return createToppingErrorReply(
                         request,
-                        topping=None,
-                        destination="PizzaManager/topping_new.html",
+                        topping=topping,
+                        destination="PizzaManager/toppings_editor.html",
                         error_message="A topping with this name already exists. Please enter a unique name. Name unchanged."
                     )
             else:
                 return createToppingErrorReply(
                     request,
-                    topping=None,
-                    destination="PizzaManager/topping_new.html",
+                    topping=topping,
+                    destination="PizzaManager/toppings_editor.html",
                     error_message="Please do not include any special characters in the topping name. Name unchanged."
                 )
         else:
             return createToppingErrorReply(
                 request,
-                topping=None,
-                destination="PizzaManager/topping_new.html",
+                topping=topping,
+                destination="PizzaManager/toppings_editor.html",
                 error_message="Received blank. Name unchanged."
             )
         return HttpResponseRedirect(reverse("PizzaManager:Toppings Overview"))
