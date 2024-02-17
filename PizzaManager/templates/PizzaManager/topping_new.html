@@ -1,0 +1,27 @@
+{% extends "PizzaManager/default_page.html" %}
+{% block title %}Topping Creator{% endblock %}
+{% block css %}<link rel="stylesheet" href="../../static/base.css">{% endblock %}
+{% block content %}
+    <div id="new_topping_form">
+        <form action="{% url 'PizzaManager:Topping Create' %}" method="post">
+            {% csrf_token %}
+            <h2>Create New Topping</h2>
+            {% if error_message %}<p><b>ERROR: {{ error_message }}</b></p>{% endif %}
+            <fieldset id="new_name_field" class="reduce-horizontal">
+                <legend>Name</legend>
+                <label for="new_topping_name">Topping Name:</label>
+                <input id="new_topping_name" name="new_topping_name" type="textfield" maxlength="25">
+            </fieldset>
+            <div id="new_topping_buttons">
+                <button id="new_cancel_button" type="submit" name="cancel_topping_new" value="cancel_topping_new" onclick="closeNewToppingForm()">Cancel</button>
+                <button id="new_button" type="submit" name="topping_new" value="topping_new">Save</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function closeNewToppingForm() {
+            document.getElementById("new_topping_name").value = ""
+        }
+    </script>
+{% endblock %}
