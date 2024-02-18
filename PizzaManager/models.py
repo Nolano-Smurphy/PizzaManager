@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class Toppings(models.Model):
+class Topping(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
@@ -9,7 +9,7 @@ class Toppings(models.Model):
 
 class Pizza(models.Model):
     name = models.CharField(max_length=50)
-    toppings = models.ManyToManyField(Toppings)
+    toppings = models.ManyToManyField(Topping)
 
     def __str__(self):
         return self.name

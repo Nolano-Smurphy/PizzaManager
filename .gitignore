@@ -5,3 +5,6 @@ db.sqlite3.backup
 db.sqlite3.backup.old
 __pycache__/
 .vscode
+
+*.bak
+*.sqlite3

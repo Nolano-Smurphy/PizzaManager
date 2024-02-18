@@ -1,0 +1,78 @@
+{% extends "PizzaManager/default_page.html" %}
+{% block title %}{{ topping.name }} Editor{% endblock %}
+{% block css %}<link rel="stylesheet" href="../../static/base.css">{% endblock %}
+
+{% block navigation_buttons %}
+    <div id="header" class="block bar">
+        <a id="back_to_overview" class="button nav" href="{% url 'PizzaManager:Toppings Overview' %}">
+            Toppings Menu
+        </a>
+        <a id="back_to_home" class="button nav" href="{% url 'PizzaManager:index' %}">
+            Home Menu
+        </a>
+    </div><br>
+{% endblock %}
+
+{% block content %}
+    <h1>{{ topping.name }}</h1>
+    {% if error_message %}<p><b>ERROR: {{ error_message }}</b></p>{% endif %}
+
+    <fieldset id="toppingChanges" class="reduce-horizontal">
+        <legend>Pizza</legend>
+        <button id="edit_topping_name" onclick="openChangeToppingNameForm()">Rename Topping</button>
+        <button id="delete_topping" onclick="openDeleteToppingForm()">Delete Topping</button>
+    </fieldset><br>
+
+    <!-- All forms will not be visible unless specifically requested by button. -->
+
+    <div id="change_name_topping_form" class="popForm">
+        <form action="{% url 'PizzaManager:Toppings Editor' topping.id%}" method="post">
+            {% csrf_token %}
+            <h2>Change Topping Name</h2>
+            <label for="old_name_field">Current Topping Name:</label>
+            <p id="old_name_field">{{topping.name}}</p>
+            <label for="new_name_field">New Topping Name:</label><br>
+            <input id="new_name_field" name="new_name" type="textfield" maxlength="25">
+            <div id="change_name_buttons">
+                <button id="change_topping_name_cancel_button" type="button" onclick="closeChangeToppingNameForm()">Cancel</button>
+                <button id="change_topping_name_save_button" type="submit" name="topping_name_change" value="topping_name_change">Save</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="delete_topping_form" class="popForm">
+        <form action="{% url 'PizzaManager:Toppings Editor' topping.id%}" method="post">
+            {% csrf_token %}
+            <h2>Delete Topping</h2>
+            <p>Are you sure you wish to delete <b>{{topping.name}}</b>?</p>
+            <div id="delete_buttons">
+                <button id="delete_topping_cancel_button" type="button" onclick="closeDeleteToppingForm()">No(Keep)</button>
+                <button id="delete_topping_button" type="submit" name="topping_delete" value="topping_delete">Yes(Delete)</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function openChangeToppingNameForm() {
+            closeAllForms()
+            document.getElementById("change_name_topping_form").style.display = "block"
+        }
+        function closeChangeToppingNameForm() {
+            document.getElementById("new_name_field").value = ""
+            document.getElementById("change_name_topping_form").style.display = "none"
+        }
+
+        function openDeleteToppingForm() {
+            closeAllForms()
+            document.getElementById("delete_topping_form").style.display = "block"
+        }
+        function closeDeleteToppingForm() {
+            document.getElementById("delete_topping_form").style.display = "none"
+        }
+
+        function closeAllForms() {
+            closeChangeToppingNameForm()
+            closeDeleteToppingForm()
+        }
+    </script>
+{% endblock %}
