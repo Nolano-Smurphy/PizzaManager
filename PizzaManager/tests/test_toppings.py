@@ -6,12 +6,11 @@ from PizzaManager.models import Topping
 
 HTTP_OK = 200
 HTTP_REDIRECT = 302
-HTTP_NOT_FOUND = 404
 
 # Create your tests here.
 class TestToppings(TestCase):
     """
-    Tests that the home page loads in properly. This is mostly included to test that the app can run.
+    Tests that confirm each of the requirements for Topping functionality are satisfied.
     """
 
     @classmethod
