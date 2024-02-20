@@ -282,7 +282,6 @@ def pizza_create(request):
                         new_pizza = Pizza(name=pizza_name)
                         new_pizza.save()
                         for topping in request.POST.getlist("toppings_options"):
-                            logging.warning("Adding %s to a pizza." % topping)
                             topping_to_add = get_object_or_404(Topping, name=topping)
                             new_pizza.toppings.add(topping_to_add)
                         new_pizza.save()
