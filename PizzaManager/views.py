@@ -1,5 +1,7 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse, HttpResponseRedirect
+
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+
 from django.urls import reverse
 from django.views import generic
 
@@ -66,6 +68,8 @@ def toppings_editor(request, topping_id):
     elif "topping_delete" in request.POST:
         topping.delete()
         return HttpResponseRedirect(reverse("PizzaManager:Toppings Overview"))
+    else:
+        raise Http404
 
 def topping_create(request):
     """
@@ -105,6 +109,8 @@ def topping_create(request):
                 )
     elif "cancel_topping_new" in request.POST:
         return HttpResponseRedirect(reverse("PizzaManager:Toppings Overview"))
+    else:
+        raise Http404
 
 class PizzaOverview(generic.ListView):
     """
@@ -278,7 +284,6 @@ def pizza_create(request):
                         new_pizza = Pizza(name=pizza_name)
                         new_pizza.save()
                         for topping in request.POST.getlist("toppings_options"):
-                            logging.warning("Adding %s to a pizza." % topping)
                             topping_to_add = get_object_or_404(Topping, name=topping)
                             new_pizza.toppings.add(topping_to_add)
                         new_pizza.save()
